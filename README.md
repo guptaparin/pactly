@@ -41,11 +41,16 @@ npm run dev                  # http://localhost:3000
 2. Use the sandbox **personal** account to pay, and the sandbox **business** account email as the seller.
 3. Optional: add a webhook pointing to `/api/webhooks/paypal` and set `PAYPAL_WEBHOOK_ID`.
 
-Deploy: one click on Render with the included `render.yaml`.
+## Deploy (free, no card)
+1. Import the repo at https://vercel.com/new (Hobby plan).
+2. In the project, open **Storage → Create → Upstash for Redis** (free) and connect it; this injects `KV_REST_API_URL` / `KV_REST_API_TOKEN`.
+3. Add the variables from `.env.example` under **Settings → Environment Variables** and redeploy.
+
+Without Redis configured, pacts are stored in `data/pacts.json` (fine for local development).
 
 ## Notes and limits
 - Sandbox only. PayPal authorizations are honored for 3 days and valid up to 29 days, which fits short gig deals; longer deals would re-authorize.
-- Storage is a JSON file for simplicity; swap `lib/store.js` for Postgres in production.
+- Storage: Upstash Redis in production, JSON file locally (`lib/store.js`).
 
 ## License
 MIT

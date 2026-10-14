@@ -5,7 +5,7 @@ import { store, log, heldAmount } from "@/lib/store";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return NextResponse.json(store.all().map((p) => ({ ...p, held: heldAmount(p) })));
+  return NextResponse.json((await store.all()).map((p) => ({ ...p, held: heldAmount(p) })));
 }
 
 export async function POST(req) {
@@ -29,7 +29,7 @@ export async function POST(req) {
       createdAt: new Date().toISOString(),
     };
     log(pact, "agent", "pact_drafted", `Extracted ${ms.length} milestone(s), risk ${ai.riskScore}/100`);
-    store.put(pact);
+    await store.put(pact);
     return NextResponse.json(pact);
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });

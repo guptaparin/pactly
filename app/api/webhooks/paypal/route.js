@@ -11,9 +11,9 @@ export async function POST(req) {
   }
   const r = event.resource || {};
   const authId = r.supplementary_data?.related_ids?.authorization_id || r.id;
-  const pact = store.all().find((p) => p.authorizationId === authId);
+  const pact = (await store.all()).find((p) => p.authorizationId === authId);
   if (pact) {
-    store.update(pact.id, (p) => {
+    await store.update(pact.id, (p) => {
       log(p, "paypal", "webhook", `${event.event_type} (${r.status || ""})`);
       if (event.event_type === "PAYMENT.AUTHORIZATION.VOIDED") p.status = p.released > 0 ? "settled" : "voided";
     });
