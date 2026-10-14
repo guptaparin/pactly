@@ -23,7 +23,7 @@ Freelancers and small sellers close millions of deals in WhatsApp and Instagram 
 | Webhooks + signature verification | Reconciling pact state with PayPal |
 
 ## AI integration
-Anthropic Claude (`claude-sonnet-5-5`, configurable) is used through structured tool-use calls, so every decision is machine-readable JSON:
+Google Gemini (`gemini-2.5-flash`, free tier) is the default model, called with a strict JSON response schema so every decision is machine-readable. Anthropic Claude is supported as a drop-in alternative (`AI_PROVIDER=anthropic`).
 - **Pact extraction**: chat → contract, milestones, criteria, risk flags (works with Hinglish/mixed-language chats)
 - **Delivery verification**: multimodal check of screenshots + notes against each criterion
 - **Dispute mediation**: proposes a seller/buyer split with reasoning
@@ -34,7 +34,7 @@ The AI never moves money on its own text: it returns structured decisions, and t
 ```bash
 git clone <this repo> && cd pactly
 npm install
-cp .env.example .env.local   # fill in sandbox credentials + Anthropic key
+cp .env.example .env.local   # fill in sandbox credentials + free Gemini key
 npm run dev                  # http://localhost:3000
 ```
 1. Create a sandbox REST app at https://developer.paypal.com/dashboard/applications/sandbox and copy the client ID/secret (use the client ID for both `PAYPAL_CLIENT_ID` and `NEXT_PUBLIC_PAYPAL_CLIENT_ID`).
