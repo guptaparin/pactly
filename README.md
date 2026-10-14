@@ -23,7 +23,7 @@ Freelancers and small sellers close millions of deals in WhatsApp and Instagram 
 | Webhooks + signature verification | Reconciling pact state with PayPal |
 
 ## AI integration
-Google Gemini (`gemini-2.5-flash`, free tier) is the default model, called with a strict JSON response schema so every decision is machine-readable. Anthropic Claude is supported as a drop-in alternative (`AI_PROVIDER=anthropic`).
+Google Gemini (`gemini-3.8-flash`, free tier) is the default model, called with a strict JSON response schema so every decision is machine-readable. Anthropic Claude is supported as a drop-in alternative (`AI_PROVIDER=anthropic`).
 - **Pact extraction**: chat → contract, milestones, criteria, risk flags (works with Hinglish/mixed-language chats)
 - **Delivery verification**: multimodal check of screenshots + notes against each criterion
 - **Dispute mediation**: proposes a seller/buyer split with reasoning
