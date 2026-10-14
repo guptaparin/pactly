@@ -1,0 +1,15 @@
+{
+  "name": "pactly",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest",
+    "ag-grid-community": "^32.3.0",
+    "ag-grid-react": "^32.3.0",
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
