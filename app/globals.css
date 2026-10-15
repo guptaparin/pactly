@@ -44,3 +44,5 @@ button:disabled { opacity: .5; cursor: wait; }
 @media (max-width: 720px) { .steps { grid-template-columns: 1fr 1fr; } }
 .steps div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; font-size: 14px; }
 .steps b { display: block; font-family: Fraunces, serif; font-size: 22px; }
+.ag-cell .pill { line-height: 1.5; padding: 2px 10px; vertical-align: middle; }
+.ag-cell { display: flex; align-items: center; }
