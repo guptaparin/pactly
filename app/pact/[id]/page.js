@@ -42,10 +42,15 @@ export default function PactPage({ params }) {
       }).render(ppRef.current);
     };
     if (window.paypal) return render();
-    const s = document.createElement("script");
-    s.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=${p.currency}&intent=authorize`;
-    s.onload = render;
-    document.body.appendChild(s);
+    (async () => {
+      const { paypalClientId } = await fetch("/api/config").then((r) => r.json());
+      if (!paypalClientId) { setErr("PayPal client ID is not configured on the server (PAYPAL_CLIENT_ID)."); return; }
+      const s = document.createElement("script");
+      s.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=${p.currency}&intent=authorize&components=buttons`;
+      s.onload = render;
+      s.onerror = () => setErr(`PayPal checkout could not load (currency ${p.currency}). Check the client ID, or disable ad-blockers for this site.`);
+      document.body.appendChild(s);
+    })();
   }, [p?.status, p?.currency, role]);
 
   if (!p) return <p className="muted">Loading pact…</p>;
