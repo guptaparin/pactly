@@ -46,3 +46,6 @@ button:disabled { opacity: .5; cursor: wait; }
 .steps b { display: block; font-family: Fraunces, serif; font-size: 22px; }
 .ag-cell .pill { line-height: 1.5; padding: 2px 10px; vertical-align: middle; }
 .ag-cell { display: flex; align-items: center; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+.grid3 .card { margin-top: 0; }
+@media (max-width: 760px) { .grid3 { grid-template-columns: 1fr; } }

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { store, log, heldAmount } from "@/lib/store";
 import { paypal } from "@/lib/paypal";
 import { verifyDelivery, mediate } from "@/lib/ai";
+import { enforceDeadlines } from "@/lib/agent";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -36,6 +37,7 @@ export async function POST(req, { params }) {
   try {
     const pact = await store.get(id);
     if (!pact) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (pact.demo) return NextResponse.json({ error: "This is a read-only demo pact. Create a new pact to try the live PayPal flow." }, { status: 400 });
     const i = body.milestone ?? pact.milestones.findIndex((m) => !["released", "refunded"].includes(m.status));
     const m = pact.milestones[i];
 
@@ -83,6 +85,16 @@ export async function POST(req, { params }) {
           mm.status = "pending";
           log(p, "buyer", "revision_requested", `${mm.name}: seller asked to fix and resubmit (attempt ${mm.history.length + 1})`);
         });
+        return NextResponse.json(p);
+      }
+      case "simulate-deadline": { // demo helper: move the open milestone's deadline into the past, then let the agent act
+        const p = await store.get(id);
+        const mm = p.milestones[i];
+        if (!mm || mm.status !== "pending") throw new Error("No undelivered milestone to expire");
+        mm.deadline = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        log(p, "system", "clock_advanced", `Demo: "${mm.name}" deadline moved to ${mm.deadline}`);
+        await enforceDeadlines(p);
+        await store.put(p);
         return NextResponse.json(p);
       }
       case "dispute": {

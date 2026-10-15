@@ -70,6 +70,7 @@ export default function PactPage({ params }) {
           <button className={role === "seller" ? "" : "ghost"} onClick={() => setRole("seller")}>Seller</button>
         </div>
       </div>
+      {p.demo && <div className="risk" style={{ background: "var(--blue-bg)" }}><b>Demo pact (read-only).</b> <span className="small">It shows a lifecycle state without touching PayPal. <a href="/">Create a live pact</a> to try the real sandbox flow.</span></div>}
       <h1 style={{ fontSize: 38 }}>{p.title}</h1>
       <p className="lede">{p.summary}</p>
       {err && <div className="err">{err}</div>}
@@ -83,7 +84,7 @@ export default function PactPage({ params }) {
               <div key={i} className="card" style={{ marginTop: 10, padding: 16 }}>
                 <div className="row" style={{ justifyContent: "space-between" }}>
                   <b>{ms.name}</b>
-                  <span className="row"><b>{fmt(ms.amount, p.currency)}</b><span className={`pill s-${ms.status}`}>{ms.status}</span></span>
+                  <span className="row">{ms.deadline && <span className="small muted">due {ms.deadline}</span>}<b>{fmt(ms.amount, p.currency)}</b><span className={`pill s-${ms.status}`}>{ms.status}</span></span>
                 </div>
                 <ul className="small muted">{ms.criteria.map((c, j) => <li key={j}>{c}</li>)}</ul>
                 {ms.verdict && (
@@ -124,6 +125,12 @@ export default function PactPage({ params }) {
                   setNote(""); setLinks(""); setFiles([]);
                 }}>Submit for AI verification</button>
               </div>
+            </div>
+          )}
+          {p.status === "funded" && m?.status === "pending" && !p.demo && (
+            <div className="card small">
+              <b>Agent watch:</b> if “{m.name}” isn&apos;t delivered by {m.deadline || "its deadline"}, the agent voids the PayPal hold and returns the money automatically.
+              <div style={{ marginTop: 8 }}><button className="ghost" disabled={!!busy} onClick={() => act("simulate-deadline", { milestone: idx }, "Advancing clock… agent is checking deadlines")}>⏩ Simulate missed deadline (demo)</button></div>
             </div>
           )}
           {p.status === "funded" && m?.status === "pending" && role === "buyer" && <div className="card muted">Funds are held. Waiting for the seller to {m.history?.length ? "resubmit" : "deliver"} “{m.name}”.</div>}

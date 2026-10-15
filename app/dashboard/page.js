@@ -8,10 +8,13 @@ const money = (p) => (p.value == null ? "" : `${p.data.currency} ${Number(p.valu
 
 export default function Dashboard() {
   const [rows, setRows] = useState([]);
-  useEffect(() => { fetch("/api/pacts").then((r) => r.json()).then(setRows); }, []);
+  const [loading, setLoading] = useState(false);
+  const load = () => fetch("/api/pacts").then((r) => r.json()).then(setRows);
+  useEffect(() => { load(); }, []);
+  async function loadDemo() { setLoading(true); await fetch("/api/demo", { method: "POST" }); await load(); setLoading(false); }
 
   const cols = useMemo(() => [
-    { field: "title", flex: 2, cellRenderer: (p) => <a href={`/pact/${p.data.id}`}>{p.value}</a>, filter: true },
+    { field: "title", flex: 2, filter: true, cellRenderer: (p) => <span><a href={`/pact/${p.data.id}`}>{p.value}</a>{p.data.demo && <span className="pill s-pending" style={{ marginLeft: 8 }}>demo</span>}</span> },
     { field: "buyer", filter: true }, { field: "seller", filter: true },
     { field: "status", cellRenderer: (p) => <span className={`pill s-${p.value}`}>{p.value}</span>, filter: true },
     { field: "amount", valueFormatter: money },
@@ -25,7 +28,10 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 style={{ fontSize: 40 }}>Ledger</h1>
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <h1 style={{ fontSize: 40 }}>Ledger</h1>
+        <button className="ghost" onClick={loadDemo} disabled={loading}>{loading ? "Loading…" : "Load demo pacts"}</button>
+      </div>
       <div className="row">
         <div className="card" style={{ flex: 1 }}><div className="muted small">Pacts</div><div className="money">{rows.length}</div></div>
         <div className="card" style={{ flex: 1 }}><div className="muted small">Currently held</div><div className="money">{totals.held.toFixed(2)}</div></div>

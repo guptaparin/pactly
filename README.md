@@ -10,7 +10,14 @@ Freelancers and small sellers close millions of deals in WhatsApp and Instagram 
 3. **Deliver → verify.** The seller submits notes, links and screenshots. A vision-capable model checks every acceptance criterion and recommends release / partial / hold.
 4. **Settle.** On acceptance, the agent **captures** that milestone's amount from the authorization (partial captures across milestones, `final_capture` on the last one). Cancelled or failed deals **void** the hold so the buyer is never charged.
 5. **Dispute → mediation.** Either side can state their case; a mediator agent proposes a fair split that is executed as a partial capture once both accept.
-6. **Ledger.** An AG Grid ledger shows every pact, held vs released money and risk. Every step is in an audit trail.
+6. **Autonomous deadline enforcement.** No human click needed: if a milestone passes its deadline with no delivery, the agent voids the PayPal authorization and the buyer's money is released automatically (demo button: *Simulate missed deadline*).
+7. **Ledger.** An AG Grid ledger shows every pact, held vs released money and risk. Every step is in an audit trail.
+
+## Try it in 60 seconds (for judges)
+- **Live demo:** https://pactly-vert.vercel.app
+- **See every state instantly:** open **Ledger → Load demo pacts** (settled, partial verdict, dispute, auto-voided deadline, high-risk scam chat). Demo pacts are read-only and never touch PayPal.
+- **Live PayPal flow:** New pact → *Use sample chat* → *Draft pact with AI* → pay with the yellow PayPal button using a **US sandbox personal account** → switch to *Seller* and submit work → switch to *Buyer* and settle.
+- Tip: use an incognito window so PayPal doesn't reuse another login.
 
 ## PayPal integration
 | Capability | Used for |

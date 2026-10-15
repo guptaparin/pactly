@@ -27,13 +27,24 @@ export default function Home() {
     <>
       <h1>Deals made in DMs,<br />protected like contracts.</h1>
       <p className="lede">Paste the chat where you agreed a deal. Pactly&apos;s AI agent writes the contract, PayPal holds the money, and the agent only releases it when the work actually matches what was promised.</p>
+      <div className="row" style={{ marginTop: 18 }}>
+        <a className="btn" href="#start">Create a pact →</a>
+        <a className="btn" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line)" }} href="/dashboard">See the ledger demo</a>
+      </div>
+      <div className="grid3">
+        <div className="card"><b>The buyer&apos;s fear</b><p className="small muted">“I paid upfront in a DM and the seller vanished.” Chat deals have no protection: no contract, no proof, no refund path.</p></div>
+        <div className="card"><b>The seller&apos;s fear</b><p className="small muted">“I delivered the work and got ghosted.” Freelancers working first carry all the risk of non-payment.</p></div>
+        <div className="card"><b>Why existing escrow fails</b><p className="small muted">Traditional escrow means forms, fees and days of manual review: far too heavy for a $50 logo or a $300 website.</p></div>
+      </div>
+      <h2 style={{ marginTop: 34 }}>How Pactly works</h2>
       <div className="steps">
         <div><b>1</b>AI turns the chat into a pact with checkable criteria</div>
         <div><b>2</b>Buyer pays — PayPal <i>authorizes</i>, funds are held</div>
         <div><b>3</b>Seller delivers — AI verifies each criterion</div>
         <div><b>4</b>Agent captures, splits or returns the money</div>
       </div>
-      <div className="card">
+      <p className="small muted" style={{ marginTop: 10 }}>The agent also works on its own: it flags scam patterns before anyone pays, and voids the PayPal hold automatically if a deadline passes with no delivery.</p>
+      <div className="card" id="start">
         <div className="row" style={{ justifyContent: "space-between" }}>
           <h2>Paste the deal chat</h2>
           <button className="ghost" onClick={() => setChat(SAMPLE)}>Use sample chat</button>
