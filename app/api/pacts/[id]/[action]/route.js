@@ -27,7 +27,7 @@ async function settle(pact, i, percent, actor, reason) {
   m.releasedAmount = amount;
   log(pact, actor, amount > 0 ? "funds_captured" : "funds_returned",
     `${m.name}: ${amount} ${pact.currency} to seller (${percent}%). ${reason}`);
-  if (isLast) pact.status = "settled";
+  if (isLast) pact.status = (pact.released || 0) > 0 ? "settled" : "voided";
 }
 
 export async function POST(req, { params }) {
@@ -73,6 +73,16 @@ export async function POST(req, { params }) {
         const p = await store.update(id, () => {});
         await settle(p, i, percent, "buyer", body.percent != null ? "Buyer override" : "Buyer accepted agent verdict");
         await store.put(p);
+        return NextResponse.json(p);
+      }
+      case "revise": { // buyer asks the seller to fix the work and resubmit; hold stays in place
+        const p = await store.update(id, (p) => {
+          const mm = p.milestones[i];
+          mm.history = [...(mm.history || []), { verdict: mm.verdict, submission: mm.submission }];
+          delete mm.verdict; delete mm.submission;
+          mm.status = "pending";
+          log(p, "buyer", "revision_requested", `${mm.name}: seller asked to fix and resubmit (attempt ${mm.history.length + 1})`);
+        });
         return NextResponse.json(p);
       }
       case "dispute": {

@@ -110,6 +110,7 @@ export default function PactPage({ params }) {
           {p.status === "funded" && m && m.status === "pending" && role === "seller" && (
             <div className="card">
               <h2>Submit: {m.name}</h2>
+              {m.history?.length > 0 && <div className="risk" style={{ background: "var(--amber-bg)" }}><b>Revision requested.</b> <span className="small">Last check: {m.history.at(-1).verdict?.summary}</span></div>}
               <label>Note to buyer</label>
               <textarea style={{ minHeight: 80 }} value={note} onChange={(e) => setNote(e.target.value)} />
               <label>Links (comma separated)</label>
@@ -125,15 +126,25 @@ export default function PactPage({ params }) {
               </div>
             </div>
           )}
-          {p.status === "funded" && m?.status === "pending" && role === "buyer" && <div className="card muted">Funds are held. Waiting for the seller to deliver “{m.name}”.</div>}
+          {p.status === "funded" && m?.status === "pending" && role === "buyer" && <div className="card muted">Funds are held. Waiting for the seller to {m.history?.length ? "resubmit" : "deliver"} “{m.name}”.</div>}
 
           {m?.status === "verified" && (
             <div className="card">
               <h2>Settle “{m.name}”</h2>
               {role === "buyer" ? (
                 <div className="row">
-                  <button className="green" disabled={!!busy} onClick={() => act("approve", { milestone: idx }, "Capturing via PayPal…")}>Accept verdict — release {m.verdict.releasePercent}%</button>
-                  <button className="ghost" disabled={!!busy} onClick={() => act("approve", { milestone: idx, percent: 100 }, "Capturing via PayPal…")}>Release 100% anyway</button>
+                  {m.verdict.releasePercent > 0 && (
+                    <button className="green" disabled={!!busy} onClick={() => act("approve", { milestone: idx }, "Capturing via PayPal…")}>Accept verdict — release {m.verdict.releasePercent}%</button>
+                  )}
+                  {m.verdict.releasePercent < 100 && (
+                    <button disabled={!!busy} onClick={() => act("revise", { milestone: idx }, "Sending back to seller…")}>Ask seller to fix &amp; resubmit</button>
+                  )}
+                  {m.verdict.releasePercent < 100 && (
+                    <button className="ghost" disabled={!!busy} onClick={() => act("approve", { milestone: idx, percent: 100 }, "Capturing via PayPal…")}>Release 100% anyway</button>
+                  )}
+                  {m.verdict.releasePercent === 0 && (
+                    <button className="ghost" disabled={!!busy} onClick={() => act("approve", { milestone: idx, percent: 0 }, "Returning funds…")}>Refund this milestone</button>
+                  )}
                 </div>
               ) : <p className="muted small">The buyer can accept the agent&apos;s verdict, or either side can raise a dispute.</p>}
               <label>Dispute — buyer&apos;s side</label>
