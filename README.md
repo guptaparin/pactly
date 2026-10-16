@@ -4,6 +4,12 @@
 
 Freelancers and small sellers close millions of deals in WhatsApp and Instagram chats. Either the buyer pays first and risks a scam, or the seller works first and risks never being paid. Formal escrow is too heavy for a $120 logo job. Pactly makes it one paste.
 
+**Why it matters**
+- Americans lost **$2.7B** to scams that began on social media since 2021; **44%** of reports in H1 2023 were shopping scams, mostly goods never delivered ([FTC data via Security Boulevard](https://securityboulevard.com/2023/10/ftc-american-lost-2-7-billion-since-2021-to-social-media-scams)).
+- **62%** of New York freelancers have lost wages to non-paying clients, and fewer than **1%** pursued legal action ([Authors Guild / Freelancers Union survey, 2022](https://authorsguild.org/news/survey-finds-62-percent-of-ny-freelance-workers-have-lost-wages-due-to-nonpayment)).
+
+Both sides of an informal deal carry real risk, and neither has a lightweight way to protect it. Pactly is that way.
+
 ## How it works
 1. **Chat → contract.** Paste the deal chat. The agent extracts parties, price, deadline, milestones and *objectively checkable* acceptance criteria, and scores scam risk.
 2. **Pay → hold.** The buyer pays with PayPal using an order with `intent: AUTHORIZE`. Funds are reserved on the buyer's account, not paid out.

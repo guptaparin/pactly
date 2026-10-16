@@ -62,3 +62,6 @@ button.small { font-size: 13px; padding: 8px 12px; }
 .md hr { border: 0; border-top: 1px solid var(--line); margin: 10px 0; }
 .md code { font-family: "JetBrains Mono", monospace; font-size: 12px; background: #e9e2d4; padding: 1px 5px; border-radius: 4px; }
 .md a.pid { font-family: "JetBrains Mono", monospace; font-size: 12px; background: var(--blue-bg); color: var(--blue); padding: 1px 6px; border-radius: 4px; text-decoration: none; }
+.stats div { background: var(--ink); color: var(--paper); border-radius: 14px; padding: 18px; }
+.stats b { display: block; font: 700 34px Fraunces, serif; }
+.stats span { font-size: 13px; opacity: .85; } .stats a { color: #e9d9b8; }

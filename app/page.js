@@ -36,6 +36,11 @@ export default function Home() {
         <div className="card"><b>The seller&apos;s fear</b><p className="small muted">“I delivered the work and got ghosted.” Freelancers working first carry all the risk of non-payment.</p></div>
         <div className="card"><b>Why existing escrow fails</b><p className="small muted">Traditional escrow means forms, fees and days of manual review: far too heavy for a $50 logo or a $300 website.</p></div>
       </div>
+      <div className="grid3 stats">
+        <div><b>$2.7B</b><span>lost by Americans to scams that started on social media since 2021; online shopping was the most-reported type. <a href="https://securityboulevard.com/2023/10/ftc-american-lost-2-7-billion-since-2021-to-social-media-scams" target="_blank" rel="noreferrer">FTC data, 2023</a></span></div>
+        <div><b>44%</b><span>of social-media scam reports in H1 2023 were shopping scams, mostly goods that never arrived. <a href="https://securityboulevard.com/2023/10/ftc-american-lost-2-7-billion-since-2021-to-social-media-scams" target="_blank" rel="noreferrer">FTC data, 2023</a></span></div>
+        <div><b>62%</b><span>of New York freelancers have lost wages to a client who never paid; fewer than 1% took legal action. <a href="https://authorsguild.org/news/survey-finds-62-percent-of-ny-freelance-workers-have-lost-wages-due-to-nonpayment" target="_blank" rel="noreferrer">Freelancers Union et al., 2022</a></span></div>
+      </div>
       <h2 style={{ marginTop: 34 }}>How Pactly works</h2>
       <div className="steps">
         <div><b>1</b>AI turns the chat into a pact with checkable criteria</div>
