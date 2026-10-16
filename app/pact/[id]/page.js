@@ -104,7 +104,12 @@ export default function PactPage({ params }) {
 
           {/* Action panel for the current step */}
           {p.status === "draft" && role === "buyer" && (
-            <div className="card"><h2>Fund this pact</h2><p className="small muted">Your money is <b>held</b> by PayPal, not paid out. It only moves when the agent verifies delivery.</p><div ref={ppRef} /></div>
+            <div className="card"><h2>Fund this pact</h2><p className="small muted">Your money is <b>held</b> by PayPal, not paid out. It only moves when the agent verifies delivery.</p><div ref={ppRef} />
+              <details className="small" style={{ marginTop: 10 }}><summary><b>Testing? Use the sandbox buyer account</b></summary>
+                <p className="muted">PayPal sandbox, fake money. Click the yellow button, choose <b>Log In</b>, then use:</p>
+                <div className="audit">Email: sb-fonqm53381183@personal.example.com<br />Password: K)&3+uHc</div>
+                <p className="muted">Tip: an incognito window avoids PayPal reusing another login.</p>
+              </details></div>
           )}
           {p.status === "draft" && role === "seller" && <div className="card muted">Waiting for the buyer to fund the pact.</div>}
 

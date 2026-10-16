@@ -17,7 +17,10 @@ Freelancers and small sellers close millions of deals in WhatsApp and Instagram 
 - **Live demo:** https://pactly-vert.vercel.app
 - **See every state instantly:** open **Ledger → Load demo pacts** (settled, partial verdict, dispute, auto-voided deadline, high-risk scam chat). Demo pacts are read-only and never touch PayPal.
 - **Live PayPal flow:** New pact → *Use sample chat* → *Draft pact with AI* → pay with the yellow PayPal button using a **US sandbox personal account** → switch to *Seller* and submit work → switch to *Buyer* and settle.
-- Tip: use an incognito window so PayPal doesn't reuse another login.
+- **Sandbox buyer login (fake money, safe to share):**
+  - Email: `sb-fonqm53381183@personal.example.com`
+  - Password: `K)&3+uHc`
+- Tip: use an incognito window so PayPal doesn't reuse another login. Use a US sandbox buyer; PayPal blocks some same-country payments (for example India to India) even in sandbox.
 
 ## PayPal integration
 | Capability | Used for |
