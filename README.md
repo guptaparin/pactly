@@ -11,7 +11,8 @@ Freelancers and small sellers close millions of deals in WhatsApp and Instagram 
 4. **Settle.** On acceptance, the agent **captures** that milestone's amount from the authorization (partial captures across milestones, `final_capture` on the last one). Cancelled or failed deals **void** the hold so the buyer is never charged.
 5. **Dispute → mediation.** Either side can state their case; a mediator agent proposes a fair split that is executed as a partial capture once both accept.
 6. **Autonomous deadline enforcement.** No human click needed: if a milestone passes its deadline with no delivery, the agent voids the PayPal authorization and the buyer's money is released automatically (demo button: *Simulate missed deadline*).
-7. **Ledger.** An AG Grid ledger shows every pact, held vs released money and risk. Every step is in an audit trail.
+7. **Chat agent (`/agent`).** Manage deals in plain language: "how much is held?", "which pacts need my decision?", or paste a chat to draft a pact. The agent uses function calling over your ledger; any release, revision or cancellation comes back as a **proposal with a Confirm button**, so a human approves every money movement.
+8. **Ledger.** An AG Grid ledger shows every pact, held vs released money and risk. Every step is in an audit trail.
 
 ## Try it in 60 seconds (for judges)
 - **Live demo:** https://pactly-vert.vercel.app
@@ -37,6 +38,7 @@ Google Gemini (`gemini-3.8-flash`, free tier) is the default model, called with 
 - **Pact extraction**: chat → contract, milestones, criteria, risk flags (works with Hinglish/mixed-language chats)
 - **Delivery verification**: multimodal check of screenshots + notes against each criterion
 - **Dispute mediation**: proposes a seller/buyer split with reasoning
+- **Conversational agent**: Gemini function calling with tools `list_pacts`, `get_pact`, `draft_pact`, and `propose_release` / `propose_revision` / `propose_cancel` (proposals only — executed by PayPal after human confirmation)
 
 The AI never moves money on its own text: it returns structured decisions, and the server maps them to specific PayPal API calls, with the human party confirming each release.
 
