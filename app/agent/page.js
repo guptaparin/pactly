@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { renderMarkdown } from "@/lib/md";
 
 const SUGGESTIONS = [
   "How much money is held right now, and for which deals?",
@@ -59,7 +60,9 @@ export default function Agent() {
             {m.steps?.length > 0 && (
               <div className="tools">{[...new Set(m.steps)].map((s) => <span key={s} className="pill s-pending">{TOOL_LABEL[s] || s}</span>)}</div>
             )}
-            <div style={{ whiteSpace: "pre-wrap" }}>{m.text}</div>
+            {m.role === "assistant"
+              ? <div className="md" dangerouslySetInnerHTML={{ __html: renderMarkdown(m.text) }} />
+              : <div style={{ whiteSpace: "pre-wrap" }}>{m.text}</div>}
             {m.proposals?.map((p, j) => (
               <div key={j} className="proposal">
                 <div><b>Proposed action:</b> {p.label}</div>
