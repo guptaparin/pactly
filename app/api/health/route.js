@@ -11,6 +11,9 @@ export async function GET() {
     paypalSecret: process.env.PAYPAL_CLIENT_SECRET ? `set (${process.env.PAYPAL_CLIENT_SECRET.trim().length} chars)` : "MISSING",
     geminiKey: process.env.GEMINI_API_KEY ? "set" : "MISSING",
     storage: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL ? "redis" : "file (not persistent on Vercel)",
+    telegram: process.env.TELEGRAM_BOT_TOKEN ? `bot token set${process.env.TELEGRAM_WEBHOOK_SECRET ? ", webhook secret set" : ", WEBHOOK SECRET MISSING"}` : "not configured (optional)",
+    mcp: process.env.MCP_API_KEY ? "/api/mcp (API key required)" : "/api/mcp (open, demo mode)",
+    cron: process.env.CRON_SECRET ? "daily agent sweep protected by CRON_SECRET" : "daily agent sweep (no CRON_SECRET)",
   };
   try { await token(); out.paypalSandboxAuth = "OK — client ID and secret are valid sandbox credentials"; }
   catch (e) { out.paypalSandboxAuth = `FAILED — ${e.message}`; }

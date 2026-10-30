@@ -7,11 +7,14 @@ const SUGGESTIONS = [
   "Which pacts need my decision?",
   "Is any deal risky?",
   "Summarize the reel edit pact and what the seller must fix",
+  "Check with PayPal that my latest funded pact's order really is authorized",
 ];
 
 const TOOL_LABEL = {
   list_pacts: "Read ledger", get_pact: "Opened pact", draft_pact: "Drafted pact",
   propose_release: "Proposed release", propose_revision: "Proposed revision", propose_cancel: "Proposed cancel",
+  paypal_get_order: "PayPal: order", paypal_list_transactions: "PayPal: transactions", paypal_list_disputes: "PayPal: disputes",
+  paypal_get_dispute: "PayPal: dispute", paypal_get_shipment_tracking: "PayPal: tracking",
 };
 
 export default function Agent() {

@@ -14,10 +14,23 @@ export default function PactPage({ params }) {
   const [files, setFiles] = useState([]);
   const [buyerSays, setBuyerSays] = useState("");
   const [sellerSays, setSellerSays] = useState("");
+  const [tracking, setTracking] = useState("");
+  const [carrier, setCarrier] = useState("");
+  const [mandate, setMandate] = useState(false);
+  const [flash, setFlash] = useState(null);
   const ppRef = useRef(null);
+  const mandateRef = useRef(false);
+  mandateRef.current = mandate;
 
   const load = () => fetch(`/api/pacts/${params.id}`).then((r) => r.json()).then(setP);
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    const q = new URLSearchParams(location.search);
+    if (q.get("role") === "seller") setRole("seller");
+    if (q.get("funded")) setFlash({ tone: "green", text: "Funds are on hold with PayPal. Nothing is paid out until the delivery is verified." });
+    if (q.get("cancelled")) setFlash({ tone: "blue", text: "PayPal checkout was cancelled. Nothing was charged." });
+    if (q.get("error")) setFlash({ tone: "red", text: q.get("error") });
+  }, []);
 
   async function act(action, body = {}, label = action) {
     setBusy(label); setErr("");
@@ -36,8 +49,8 @@ export default function PactPage({ params }) {
       ppRef.current.innerHTML = "";
       window.paypal.Buttons({
         style: { layout: "vertical", shape: "rect", label: "pay" },
-        createOrder: async () => (await act("order", {}, "Creating PayPal order…")).id,
-        onApprove: async (data) => { await act("authorize", { orderId: data.orderID }, "Placing hold…"); },
+        createOrder: async () => (await act("order", { agentMayRelease: mandateRef.current }, "Creating PayPal order…")).id,
+        onApprove: async (data) => { await act("authorize", { orderId: data.orderID, agentMayRelease: mandateRef.current }, "Placing hold…"); },
         onError: (e) => setErr(String(e)),
       }).render(ppRef.current);
     };
@@ -59,11 +72,13 @@ export default function PactPage({ params }) {
   const idx = p.milestones.findIndex((m) => !["released", "refunded"].includes(m.status));
   const m = p.milestones[idx];
   const riskColor = p.riskScore >= 60 ? "var(--red-bg)" : p.riskScore >= 30 ? "var(--amber-bg)" : "var(--green-bg)";
+  const SRC = { telegram: "Made in a Telegram chat", mcp: `Created by ${p.createdBy || "an AI agent"} over MCP`, "agent-chat": "Drafted by the Pactly agent", web: "" };
+  const hoursLeft = p.honorEndsAt ? (new Date(p.honorEndsAt) - Date.now()) / 3600000 : null;
 
   return (
     <>
       <div className="row" style={{ justifyContent: "space-between", marginTop: 10 }}>
-        <span className={`pill s-${p.status}`}>{p.status}</span>
+        <span className="row"><span className={`pill s-${p.status}`}>{p.status}</span>{SRC[p.source] && <span className="small muted">{SRC[p.source]}</span>}{p.nextAction && p.nextAction !== "Done" && <span className="small"><b>Waiting on:</b> {p.nextAction}</span>}</span>
         <div className="row small">
           Viewing as
           <button className={role === "buyer" ? "" : "ghost"} onClick={() => setRole("buyer")}>Buyer</button>
@@ -73,6 +88,7 @@ export default function PactPage({ params }) {
       {p.demo && <div className="risk" style={{ background: "var(--blue-bg)" }}><b>Demo pact (read-only).</b> <span className="small">It shows a lifecycle state without touching PayPal. <a href="/">Create a live pact</a> to try the real sandbox flow.</span></div>}
       <h1 style={{ fontSize: 38 }}>{p.title}</h1>
       <p className="lede">{p.summary}</p>
+      {flash && <div className={`banner ${flash.tone}`}>{flash.text}</div>}
       {err && <div className="err">{err}</div>}
       {busy && <div className="card small">⏳ {busy}</div>}
 
@@ -87,6 +103,14 @@ export default function PactPage({ params }) {
                   <span className="row">{ms.deadline && <span className="small muted">due {ms.deadline}</span>}<b>{fmt(ms.amount, p.currency)}</b><span className={`pill s-${ms.status}`}>{ms.status}</span></span>
                 </div>
                 <ul className="small muted">{ms.criteria.map((c, j) => <li key={j}>{c}</li>)}</ul>
+                {ms.verdict?.flagged && (
+                  <div className="banner red small">
+                    <b>🚨 Manipulation attempt blocked.</b> The submission tried to influence the AI verifier ({ms.verdict.injection.reasons.join("; ")}).
+                    Detected by {ms.verdict.injection.detectedBy.join(" and ")}. Nothing is released automatically and AI agents can&apos;t release it; only the buyer can decide.
+                    {ms.verdict.injection.excerpts?.map((x, k) => <code key={k} className="excerpt">{x}</code>)}
+                  </div>
+                )}
+                {ms.submission?.trackingNumber && <p className="small">📦 Tracking: <b>{ms.submission.carrier} {ms.submission.trackingNumber}</b>{ms.trackingRegistered && " · registered on the PayPal transaction"}</p>}
                 {ms.verdict && (
                   <div className="small">
                     <b>Agent verification:</b>
@@ -104,7 +128,12 @@ export default function PactPage({ params }) {
 
           {/* Action panel for the current step */}
           {p.status === "draft" && role === "buyer" && (
-            <div className="card"><h2>Fund this pact</h2><p className="small muted">Your money is <b>held</b> by PayPal, not paid out. It only moves when the agent verifies delivery.</p><div ref={ppRef} />
+            <div className="card"><h2>Fund this pact</h2><p className="small muted">Your money is <b>held</b> by PayPal, not paid out. It only moves when the agent verifies delivery.</p>
+              <label className="mandate"><input type="checkbox" checked={mandate} onChange={(e) => setMandate(e.target.checked)} />
+                <span><b>Let AI agents release milestones the verifier fully approves.</b><br /><span className="muted small">{p.source === "mcp" ? `${p.createdBy || "Your agent"} opened this pact. ` : ""}Agents (over MCP) can then release up to the verifier&apos;s certified percentage, never a flagged delivery. Leave unticked to approve every release yourself.</span></span>
+              </label>
+              <div ref={ppRef} />
+              <p className="small muted">Button not loading? <a href={`/api/pacts/${p.id}/fund`}>Pay on PayPal&apos;s page instead</a>.</p>
               <details className="small" style={{ marginTop: 10 }}><summary><b>Testing? Use the sandbox buyer account</b></summary>
                 <p className="muted">PayPal sandbox, fake money. Click the yellow button, choose <b>Log In</b>, then use:</p>
                 <div className="audit">Email: sb-fonqm53381183@personal.example.com<br />Password: K)&3+uHc</div>
@@ -121,13 +150,17 @@ export default function PactPage({ params }) {
               <textarea style={{ minHeight: 80 }} value={note} onChange={(e) => setNote(e.target.value)} />
               <label>Links (comma separated)</label>
               <input value={links} onChange={(e) => setLinks(e.target.value)} placeholder="https://drive.google.com/…" />
+              <div className="row" style={{ flexWrap: "nowrap" }}>
+                <div style={{ flex: 2 }}><label>Shipment tracking number (goods)</label><input value={tracking} onChange={(e) => setTracking(e.target.value)} placeholder="optional" /></div>
+                <div style={{ flex: 1 }}><label>Carrier</label><input value={carrier} onChange={(e) => setCarrier(e.target.value)} placeholder="UPS, DHL…" /></div>
+              </div>
               <label>Screenshots / files (images)</label>
               <input type="file" accept="image/*" multiple onChange={(e) => setFiles([...e.target.files])} />
               <div className="row" style={{ marginTop: 14 }}>
                 <button disabled={!!busy} onClick={async () => {
                   const images = await Promise.all(files.map(toDataUrl));
-                  await act("submit", { milestone: idx, note, links: links.split(",").map((s) => s.trim()).filter(Boolean), images }, "Agent is checking every criterion…");
-                  setNote(""); setLinks(""); setFiles([]);
+                  await act("submit", { milestone: idx, note, links: links.split(",").map((s) => s.trim()).filter(Boolean), images, trackingNumber: tracking, carrier }, "Agent is checking every criterion…");
+                  setNote(""); setLinks(""); setFiles([]); setTracking(""); setCarrier("");
                 }}>Submit for AI verification</button>
               </div>
             </div>
@@ -151,8 +184,11 @@ export default function PactPage({ params }) {
                   {m.verdict.releasePercent < 100 && (
                     <button disabled={!!busy} onClick={() => act("revise", { milestone: idx }, "Sending back to seller…")}>Ask seller to fix &amp; resubmit</button>
                   )}
-                  {m.verdict.releasePercent < 100 && (
+                  {m.verdict.releasePercent < 100 && !m.verdict.flagged && (
                     <button className="ghost" disabled={!!busy} onClick={() => act("approve", { milestone: idx, percent: 100 }, "Capturing via PayPal…")}>Release 100% anyway</button>
+                  )}
+                  {m.verdict.flagged && (
+                    <button className="ghost" disabled={!!busy} onClick={() => act("approve", { milestone: idx, percent: 100 }, "Capturing via PayPal…")}>I checked the work myself — release 100%</button>
                   )}
                   {m.verdict.releasePercent === 0 && (
                     <button className="ghost" disabled={!!busy} onClick={() => act("approve", { milestone: idx, percent: 0 }, "Returning funds…")}>Refund this milestone</button>
@@ -178,6 +214,14 @@ export default function PactPage({ params }) {
             <div className="money">{fmt(p.held, p.currency)}</div>
             <div className="muted small">Released to seller: {fmt(p.released, p.currency)} of {fmt(p.amount, p.currency)}</div>
             {p.deadline && <div className="small" style={{ marginTop: 8 }}>Deadline: <b>{p.deadline}</b></div>}
+            {p.status === "funded" && hoursLeft != null && (
+              <div className="small" style={{ marginTop: 8 }} title="PayPal guarantees capture of an authorization for 3 days; the agent reauthorizes once after that (valid up to 29 days)">
+                PayPal hold clock: <b>{hoursLeft > 0 ? `${Math.floor(Math.round(hoursLeft) / 24)}d ${Math.round(hoursLeft) % 24}h of honor period left` : "honor period over"}</b>
+                {p.reauthorizedAt ? " · renewed by the agent" : hoursLeft <= 0 ? " · agent renews it on the next check" : ""}
+                {p.authExpiresAt && <div className="muted">Authorization valid until {p.authExpiresAt.slice(0, 10)}</div>}
+              </div>
+            )}
+            {p.agentMayRelease && <div className="small" style={{ marginTop: 8 }}>🤖 AI agents may release milestones the verifier fully approves.</div>}
             {p.held > 0 && <button className="ghost" style={{ marginTop: 12 }} disabled={!!busy} onClick={() => act("cancel", { actor: role, reason: `Cancelled by ${role}` }, "Voiding hold…")}>Cancel & return held funds</button>}
             <div className="risk" style={{ background: riskColor }}>
               <b>Scam risk: {p.riskScore}/100</b>
