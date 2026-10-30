@@ -28,7 +28,8 @@ export default function Home() {
       <h1>Deals made in DMs,<br />protected like contracts.</h1>
       <p className="lede">Pactly lives where the deal is made: in your Telegram group, in a pasted WhatsApp chat, or inside an AI agent. It writes the contract, PayPal holds the money, and it&apos;s released only when the work actually matches what was promised.</p>
       <div className="row" style={{ marginTop: 18 }}>
-        <a className="btn" href="#start">Create a pact →</a>
+        <a className="btn" href="/try">Try it in a group chat →</a>
+        <a className="btn" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line)" }} href="#start">Paste a chat</a>
         <a className="btn" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line)" }} href="/connect">Add it to Telegram or an AI agent</a>
         <a className="btn" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line)" }} href="/dashboard">See the control room</a>
       </div>

@@ -8,8 +8,9 @@ Freelancers and small sellers close millions of deals in chats. Either the buyer
 - Americans lost **$2.7B** to scams that began on social media since 2021; **44%** of reports in H1 2023 were shopping scams, mostly goods never delivered ([FTC data via Security Boulevard](https://securityboulevard.com/2023/10/ftc-american-lost-2-7-billion-since-2021-to-social-media-scams)).
 - **62%** of New York freelancers have lost wages to non-paying clients, and fewer than **1%** pursued legal action ([Authors Guild / Freelancers Union survey, 2022](https://authorsguild.org/news/survey-finds-62-percent-of-ny-freelance-workers-have-lost-wages-due-to-nonpayment)).
 
-## Try it in 60 seconds (for judges)
+## Try it in 2 minutes (for judges)
 - **Live demo:** https://pactly-vert.vercel.app
+- **Start here: [Try it](https://pactly-vert.vercel.app/try).** A group chat in your browser that runs the **same bot engine** as the Telegram integration. Play Riya (buyer), Arjun (seller) and Eve (a stranger) with one-tap suggested messages and a checklist: agree a deal → the bot offers to protect it → claim roles → fund with the real PayPal sandbox → deliver (sample logo images are generated for you) → watch the seller's own "Release" tap get refused → release as the buyer → attack the AI verifier and watch the payout freeze. No Telegram account needed.
 - **Control room:** open **Control room**. Demo pacts load automatically and show every state: a blocked prompt-injection attack, an AI agent that hired a human over MCP, a renewed PayPal hold, a Telegram goods deal with tracking, a scam chat blocked before payment, a dispute, an auto-voided deadline. Try **Ask your ledger** (“Which deals need my decision?”).
 - **Telegram:** **Connect → Add the bot to a group**, chat a deal, say “deal 👍”, and follow the buttons.
 - **AI agents:** **Connect** shows the MCP server URL and copy-paste config for Claude, Claude Code and Cursor.
@@ -90,7 +91,7 @@ claude mcp add --transport http pactly https://pactly-vert.vercel.app/api/mcp
 ```
 
 ## AG Grid control room
-AG Grid Community powers `/dashboard`: custom cell renderers for the released/held/returned escrow bar, the PayPal hold clock (honor period countdown, “renewed” state), scam-risk meter and source badges; a pinned totals row; row rules for scams and blocked attacks; CSV export; a second grid of every money movement with PayPal ids, filtered by clicking a pact (external filter); and **Ask your ledger** driving `setFilterModel` / `applyColumnState` from natural language.
+AG Grid Community and AG Charts power `/dashboard`: custom cell renderers for the released/held/returned escrow bar, the PayPal hold clock (honor period countdown, “renewed” state), scam-risk meter and source badges; a pinned totals row; row rules for scams and blocked attacks; CSV export; a second grid of every money movement with PayPal ids, filtered by clicking a pact (external filter); an AG Charts stacked bar of released / held / returned money by channel (palette validated for colour-blind separation); and **Ask your ledger** driving `setFilterModel` / `applyColumnState` from natural language.
 
 ## Run locally
 ```bash
@@ -107,7 +108,7 @@ npm run dev                  # http://localhost:3000
 ```bash
 npm run build && npm run test:e2e
 ```
-43 end-to-end checks run the real Next.js server against offline PayPal and Telegram mocks with a deterministic AI stub: the web escrow flow, prompt-injection blocking, all MCP tools and mandate limits, hold reauthorization and deadline voids, every Telegram role check, and the ledger query validator.
+53 end-to-end checks run the real Next.js server against offline PayPal and Telegram mocks with a deterministic AI stub: the web escrow flow, prompt-injection blocking, all MCP tools and mandate limits, hold reauthorization and deadline voids, every Telegram role check, the chat playground, and the ledger query validator.
 
 ## Deploy (free, no card)
 1. Import the repo at https://vercel.com/new (Hobby plan).
@@ -119,6 +120,11 @@ npm run build && npm run test:e2e
 2. `/setprivacy` → choose the bot → **Disable**, so it can read the group conversation it drafts pacts from.
 3. Set `TELEGRAM_WEBHOOK_SECRET` to any random string, redeploy, then open `https://<your-app>/api/telegram/setup?key=<TELEGRAM_WEBHOOK_SECRET>` once.
 4. `/api/health` shows whether PayPal, AI, storage and Telegram are configured.
+
+## What's real and what's simulated
+- **Real:** every PayPal call (sandbox orders, authorizations, captures, voids, reauthorizations, Agent Toolkit tracking), every AI call (Gemini), the Telegram bot, the MCP server and the playground's bot logic.
+- **Simulated:** the playground replaces Telegram's servers with an in-app transcript (same `lib/telegram.js` code path); demo pacts in the control room are read-only examples that never touch PayPal; `npm run test:e2e` uses offline mocks.
+- **Not done yet:** WhatsApp/Instagram, live (non-sandbox) payouts, seller identity verification.
 
 ## Notes and limits
 - Sandbox only. PayPal honors an authorization for 3 days and it stays valid up to 29 days; Pactly reauthorizes once after the honor period, which covers deals up to about a month.

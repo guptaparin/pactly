@@ -1,5 +1,7 @@
 # Pactly demo video: script (target 2:50, hard limit 3:00)
 
+**Easiest option:** record scenes 0:20–1:50 in the **chat playground** (`/try`) instead of real Telegram. It runs the same bot, needs one browser and no second account; the one-tap suggestions follow this script exactly. Say once on screen: "this is the same bot that runs in Telegram". If you use real Telegram, follow the setup below.
+
 **Setup before recording**
 - Telegram Desktop (or web.telegram.org) with a test group: you as **Riya** (buyer) and a second account as **Arjun** (seller), plus the Pactly bot. Privacy mode disabled in @BotFather so the bot reads the chat.
 - Browser at 100% zoom, incognito (fresh PayPal sandbox login), split-screen Telegram left, browser right.

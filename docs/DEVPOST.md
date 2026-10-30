@@ -19,6 +19,8 @@ A huge share of small deals now happen in chats: a logo commissioned on Instagra
 Traditional escrow means leaving the chat for forms, fees and days of manual review: far too heavy for a $50 logo. And a new kind of buyer is arriving: AI agents that hire people for tasks, with nothing to keep them honest about payment. We wanted escrow that comes to the conversation, works for people and agents alike, and can't be sweet-talked by either.
 
 ## What it does
+**Try it without installing anything:** the [chat playground](https://pactly-vert.vercel.app/try) is a browser group chat running the same bot engine as Telegram, so you can play buyer, seller and stranger yourself, with real PayPal sandbox funding.
+
 **Three ways in, one escrow engine.**
 - **Inside Telegram.** Add the bot to the group where you're negotiating. When someone says “deal 👍” next to a price, the bot offers to protect it. `/pact` drafts the contract from the conversation; buyer and seller tap their roles; the buyer taps **Fund with PayPal**; the seller sends `/deliver` with photos, links or a tracking number; the AI verdict appears in the chat with buttons that **only the buyer** can use.
 - **For AI agents (MCP).** Pactly is a remote MCP server. An agent can hire a human, open a pact, send its owner the funding link, relay the delivery for verification and settle it.
@@ -38,7 +40,7 @@ Traditional escrow means leaving the chat for forms, fees and days of manual rev
 - **Agent mandates.** An AI agent can release money only if the buyer ticked “let AI agents release” at checkout, never above what the verifier certified, and never on a flagged delivery.
 - **Role-locked buttons** in Telegram: the seller (or a stranger in the group) tapping “Release” gets refused.
 
-**Escrow control room (AG Grid).** Every pact from the web, Telegram and agents with a released/held/returned bar, a live PayPal hold clock, scam-risk meters, a money-movements grid with PayPal ids, CSV export, and **Ask your ledger**: plain-English questions become validated AG Grid filter and sort models.
+**Escrow control room (AG Grid + AG Charts).** Every pact from the web, Telegram and agents with a released/held/returned bar, a live PayPal hold clock, scam-risk meters, a money-movements grid with PayPal ids, CSV export, an AG Charts view of money by channel, and **Ask your ledger**: plain-English questions become validated AG Grid filter and sort models.
 
 ## How we built it
 - **Next.js 14** (App Router) on Vercel, Upstash Redis for storage, a daily Vercel cron for the agent sweep.
@@ -53,8 +55,9 @@ Traditional escrow means leaving the chat for forms, fees and days of manual rev
 - **AI:** Google Gemini Flash with strict JSON response schemas for extraction, multimodal verification and mediation; function calling for the chat agent; retries and model fallback for the free tier. Anthropic Claude works as a drop-in provider.
 - **Telegram Bot API** webhook with secret-token verification and update de-duplication.
 - **MCP**: a Streamable HTTP JSON-RPC server (`/api/mcp`) with 8 tools and tool annotations.
-- **AG Grid Community**: custom cell renderers, pinned totals, row rules, external filters, CSV export, programmatic filter models from AI.
-- **Tests:** 43 end-to-end checks run the real server against offline PayPal and Telegram mocks with a deterministic AI stub (`npm run test:e2e`).
+- **AG Grid Community + AG Charts**: custom cell renderers, pinned totals, row rules, external filters, CSV export, programmatic filter models from AI, and a stacked channel chart with a colour-blind-validated palette.
+- **Chat playground**: the bot's Telegram transport is swappable, so `/try` runs the identical bot logic against an in-app transcript for judges.
+- **Tests:** 53 end-to-end checks run the real server against offline PayPal and Telegram mocks with a deterministic AI stub (`npm run test:e2e`).
 
 ## Challenges we ran into
 - **Modelling escrow on PayPal primitives.** One authorization covers several milestones, so we used partial captures with `final_capture` on the last and a void for whatever remains, plus reauthorization after the honor period. Getting “held” right after partial releases, refunds, voids and renewals took careful state design.
@@ -66,7 +69,8 @@ Traditional escrow means leaving the chat for forms, fees and days of manual rev
 - The same guarded escrow works in a Telegram group, on the web and for AI agents, with one engine and one set of rules.
 - The prompt-injection attack is blocked in all three channels, and the demo shows it.
 - An agent that takes real autonomous actions (voids, reauthorizations, reminders) without ever being able to pay anyone out.
-- 43 passing end-to-end tests covering every money path.
+- 53 passing end-to-end tests covering every money path.
+- Judges can run the whole Telegram experience in a browser tab in two minutes.
 
 ## What we learned
 - Authorize/capture is a natural fit for agentic commerce: it gives an agent a safe “held” state to reason over before money moves.
@@ -82,7 +86,7 @@ Traditional escrow means leaving the chat for forms, fees and days of manual rev
 ---
 
 ## Built with
-nextjs, react, paypal, paypal-orders-api, paypal-payments-api, paypal-js-sdk, paypal-agent-toolkit, paypal-webhooks, gemini, google-ai-studio, telegram-bot-api, model-context-protocol, ag-grid, upstash-redis, vercel, javascript
+nextjs, react, paypal, paypal-orders-api, paypal-payments-api, paypal-js-sdk, paypal-agent-toolkit, paypal-webhooks, gemini, google-ai-studio, telegram-bot-api, model-context-protocol, ag-grid, ag-charts, upstash-redis, vercel, javascript
 
 ## Tools used (AI)
 - **Google Gemini (Flash) via the Gemini API.** Pact extraction from chats (structured JSON), multimodal delivery verification with injection detection, dispute mediation, the conversational agent (function calling), and “Ask your ledger” (question → AG Grid filter model).
@@ -94,5 +98,5 @@ nextjs, react, paypal, paypal-orders-api, paypal-payments-api, paypal-js-sdk, pa
 ## Try it
 - **Live demo:** https://pactly-vert.vercel.app
 - **Repo:** https://github.com/guptaparin/pactly
-- **Instant tour:** Control room (demo pacts load automatically) · Connect (Telegram bot + MCP URL)
+- **Instant tour:** Try it (chat playground) · Control room (demo pacts load automatically) · Connect (Telegram bot + MCP URL)
 - **Sandbox buyer login:** see the README (fake money)

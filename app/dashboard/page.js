@@ -3,11 +3,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import dynamic from "next/dynamic";
+
+const ChannelChart = dynamic(() => import("./ChannelChart"), { ssr: false, loading: () => <div style={{ height: 200 }} /> });
 
 const cur = (c) => (c === "USD" || !c ? "$" : `${c} `);
 const money = (v, c) => `${cur(c)}${Number(v || 0).toFixed(2)}`;
 const MONEY_EVENTS = new Set(["funds_held", "funds_captured", "funds_returned", "hold_voided", "deadline_enforced", "hold_renewed", "injection_blocked", "tracking_added", "order_created"]);
-const SOURCE = { telegram: ["Telegram", "src-tg"], mcp: ["AI agent · MCP", "src-mcp"], "agent-chat": ["Agent chat", "src-agent"], web: ["Web", "src-web"] };
+const SOURCE = { playground: ["Chat playground", "src-pg"], telegram: ["Telegram", "src-tg"], mcp: ["AI agent · MCP", "src-mcp"], "agent-chat": ["Agent chat", "src-agent"], web: ["Web", "src-web"] };
 const SUGGESTIONS = ["Which deals need my decision?", "Risky deals", "Deals with money still held, biggest first", "Everything that came from Telegram or an AI agent", "Holds that expire within a day"];
 
 // ---------- cell renderers ----------
@@ -34,9 +37,9 @@ function EscrowBar({ data }) {
   return (
     <div className="escrow" title={`${money(data.released, data.currency)} released · ${money(data.held, data.currency)} held · ${money(data.returned, data.currency)} returned`}>
       <div className="bar">
-        <span className="b-rel" style={{ width: seg(data.released) }} />
-        <span className="b-held" style={{ width: seg(data.held) }} />
-        <span className="b-ret" style={{ width: seg(data.returned) }} />
+        {data.released > 0 && <span className="b-rel" style={{ width: seg(data.released) }} />}
+        {data.held > 0 && <span className="b-held" style={{ width: seg(data.held) }} />}
+        {data.returned > 0 && <span className="b-ret" style={{ width: seg(data.returned) }} />}
       </div>
       <div className="escrow-label">
         {data.released > 0 && <span><i className="dot rel" />{money(data.released, data.currency)}</span>}
@@ -218,6 +221,14 @@ export default function Dashboard() {
           overlayNoRowsTemplate="No pacts yet. Load the demo pacts or create one." />
       </div>
 
+      <div className="card" style={{ paddingBottom: 10 }}>
+        <div className="row" style={{ justifyContent: "space-between" }}>
+          <h2 style={{ margin: 0 }}>Where the money is, by channel</h2>
+          <span className="small muted">Hover a bar for amounts · AG Charts</span>
+        </div>
+        {rows.length > 0 && <ChannelChart rows={rows} />}
+      </div>
+
       <div className="row" style={{ justifyContent: "space-between", marginTop: 26 }}>
         <h2 style={{ margin: 0 }}>Money movements</h2>
         <span className="small muted">{focus ? <>Showing one pact · <a href="#" onClick={(e) => { e.preventDefault(); setFocus(null); }}>show all</a></> : "Click a pact above to focus it"}</span>
@@ -227,7 +238,7 @@ export default function Dashboard() {
           isExternalFilterPresent={() => !!focus} doesExternalFilterPass={(n) => n.data.pactId === focus}
           tooltipShowDelay={300} rowHeight={40} />
       </div>
-      <p className="small muted">Grids by AG Grid Community. “Ask your ledger” turns your question into an AG Grid filter and sort model with AI; the server checks it against a column whitelist before it is applied.</p>
+      <p className="small muted">Grids by AG Grid Community, chart by AG Charts. “Ask your ledger” turns your question into an AG Grid filter and sort model with AI; the server checks it against a column whitelist before it is applied.</p>
     </div>
   );
 }

@@ -72,7 +72,7 @@ export default function PactPage({ params }) {
   const idx = p.milestones.findIndex((m) => !["released", "refunded"].includes(m.status));
   const m = p.milestones[idx];
   const riskColor = p.riskScore >= 60 ? "var(--red-bg)" : p.riskScore >= 30 ? "var(--amber-bg)" : "var(--green-bg)";
-  const SRC = { telegram: "Made in a Telegram chat", mcp: `Created by ${p.createdBy || "an AI agent"} over MCP`, "agent-chat": "Drafted by the Pactly agent", web: "" };
+  const SRC = { playground: <a href="/try">Made in the chat playground ← back to the chat</a>, telegram: "Made in a Telegram chat", mcp: `Created by ${p.createdBy || "an AI agent"} over MCP`, "agent-chat": "Drafted by the Pactly agent", web: "" };
   const hoursLeft = p.honorEndsAt ? (new Date(p.honorEndsAt) - Date.now()) / 3600000 : null;
 
   return (

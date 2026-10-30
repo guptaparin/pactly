@@ -5,7 +5,7 @@ export default function RootLayout({ children }) {
     <html lang="en"><body><div className="wrap">
       <nav>
         <a href="/" className="logo"><span className="seal">P</span>Pactly</a>
-        <div className="links"><a href="/">New pact</a><a href="/connect">Connect</a><a href="/agent">Agent</a><a href="/dashboard">Control room</a></div>
+        <div className="links"><a href="/try">Try it</a><a href="/">New pact</a><a href="/connect">Connect</a><a href="/agent">Agent</a><a href="/dashboard">Control room</a></div>
       </nav>
       {children}
     </div></body></html>
