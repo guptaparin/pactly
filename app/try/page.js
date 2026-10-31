@@ -25,6 +25,15 @@ async function resize(file) {
   return c.toDataURL("image/jpeg", 0.85);
 }
 
+// A simple vector croissant: five overlapping lobes along an arc.
+function drawCroissant(g, cx, cy, fill) {
+  const lobes = [[-62, 18, 26, 20, -0.5], [-32, 2, 32, 26, -0.25], [0, -4, 38, 32, 0], [32, 2, 32, 26, 0.25], [62, 18, 26, 20, 0.5]];
+  for (const [dx, dy, rx, ry, rot] of lobes) {
+    g.beginPath(); g.ellipse(cx + dx, cy + dy, rx, ry, rot, 0, Math.PI * 2);
+    g.fillStyle = fill; g.fill(); g.lineWidth = 4; g.strokeStyle = "#5a3416"; g.stroke();
+  }
+}
+
 // Three logo concepts drawn in the browser, so judges have real images for the AI to check.
 function sampleConcepts() {
   const c = document.createElement("canvas");
@@ -34,7 +43,8 @@ function sampleConcepts() {
   looks.forEach(([bg, ink, font], i) => {
     const x = i * 400;
     g.fillStyle = bg; g.fillRect(x + 10, 10, 380, 420);
-    g.font = "120px serif"; g.textAlign = "center"; g.fillText("🥐", x + 200, 200);
+    drawCroissant(g, x + 200, 150, i === 1 ? "#e3b26b" : "#c8862f");
+    g.textAlign = "center";
     g.fillStyle = ink; g.font = `700 46px ${font}`; g.fillText("Crumb & Co", x + 200, 300);
     g.font = `500 20px ${font}`; g.fillText(["ARTISAN BAKERY", "est. 2026", "fresh every morning"][i], x + 200, 345);
     g.fillStyle = "#6b6a66"; g.font = "16px Arial"; g.fillText(`Concept ${i + 1}`, x + 200, 410);
@@ -86,11 +96,14 @@ export default function Try() {
     setBusy(label); setErr("");
     try {
       const r = await fetch("/api/playground", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat, ...body }) });
-      const d = await r.json();
-      if (d.log) setLog(d.log);
-      if (!r.ok) setErr(d.error);
-    } catch (e) { setErr(e.message); }
+      const d = await r.json().catch(() => null);
+      if (d?.log) setLog(d.log);
+      if (!r.ok) setErr(d?.error || "That took too long on our side. Nothing was lost and no money moved; send it again.");
+    } catch {
+      setErr("Connection hiccup. Nothing was lost and no money moved; send it again.");
+    }
     setBusy("");
+    refresh();
   }
 
   const send = async (who = as, msg = text, images = pics) => {
@@ -123,7 +136,7 @@ export default function Try() {
     ["funded", "Fund with PayPal", "As Riya tap “Fund with PayPal” and log in with the sandbox buyer below. The money is held, not paid."],
     ["verified", "Deliver", "As Arjun, send the /deliver line (sample concepts are attached for you). The AI checks every criterion."],
     ["refused", "Try to cheat", "Tap “Release” as Arjun or Eve. Only the buyer can move money."],
-    ["released", "Release", "Switch to Riya and tap “Release”. PayPal captures $50 from the hold."],
+    ["released", "Release", "Switch to Riya and tap “Release”. PayPal captures the approved amount from the hold."],
     ["attack", "Attack the AI", "As Arjun, deliver with hidden instructions to the verifier. Watch the payout freeze."],
   ];
   const next = steps.find(([k]) => !stage[k])?.[0];
