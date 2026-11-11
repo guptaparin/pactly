@@ -2,10 +2,11 @@
 import { NextResponse } from "next/server";
 import { CLIENT_ID, token } from "@/lib/paypal";
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 const mask = (v) => (v ? `${v.slice(0, 6)}…${v.slice(-4)} (${v.length} chars)` : "MISSING");
 
-export async function GET() {
+export async function GET(req) {
   const out = {
     paypalClientId: mask(CLIENT_ID()),
     paypalSecret: process.env.PAYPAL_CLIENT_SECRET ? `set (${process.env.PAYPAL_CLIENT_SECRET.trim().length} chars)` : "MISSING",
@@ -17,5 +18,9 @@ export async function GET() {
   };
   try { await token(); out.paypalSandboxAuth = "OK — client ID and secret are valid sandbox credentials"; }
   catch (e) { out.paypalSandboxAuth = `FAILED — ${e.message}`; }
+  if (new URL(req.url).searchParams.get("ai") === "1") {
+    const { aiPing } = await import("@/lib/ai");
+    out.ai = await aiPing();
+  }
   return NextResponse.json(out, { headers: { "Cache-Control": "no-store" } });
 }
