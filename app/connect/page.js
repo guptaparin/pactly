@@ -35,7 +35,7 @@ export default function Connect() {
         <div className="row">
           {bot && <a className="btn" href={`https://t.me/${bot}?startgroup=true`} target="_blank" rel="noreferrer">Add @{bot} to a group →</a>}
           {bot && <a className="btn" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line)" }} href={`https://t.me/${bot}`} target="_blank" rel="noreferrer">Open a DM</a>}
-          {!bot && <span className="small muted">Set <code>TELEGRAM_BOT_USERNAME</code> to show the bot link here.</span>}
+          {!bot && <><a className="btn" href="/try">Try the bot in your browser →</a><span className="small muted">The playground runs this exact bot code. To run it in your own Telegram group, follow the 5-minute bot setup in the <a href="https://github.com/guptaparin/pactly#telegram-bot-setup-5-minutes" target="_blank" rel="noreferrer">README</a>.</span></>}
         </div>
       </div>
 
