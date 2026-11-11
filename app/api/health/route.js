@@ -21,5 +21,6 @@ export async function GET(req) {
   const ai = new URL(req.url).searchParams.get("ai");
   if (ai === "1") out.ai = await (await import("@/lib/ai")).aiPing();
   if (ai === "all") out.aiModels = await (await import("@/lib/ai")).aiProbeAll();
+  if (ai === "verify") out.aiVerify = await (await import("@/lib/ai")).aiProbeVerify();
   return NextResponse.json(out, { headers: { "Cache-Control": "no-store" } });
 }
