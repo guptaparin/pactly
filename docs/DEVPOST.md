@@ -16,7 +16,7 @@ Escrow that lives inside the chat. Pactly turns any DM deal into a PayPal-held p
 ## About the project (Markdown)
 
 ## Try it in 2 minutes
-- **[Chat playground](https://pactly-vert.vercel.app/try)**: a group chat in your browser that runs the **same bot engine** as the Telegram integration. Play the buyer, the seller and a stranger, and fund the deal with the **real PayPal sandbox** (buyer login is on the page).
+- **[Chat playground](https://pactly-vert.vercel.app/try)**: a group chat in your browser that runs the **same bot code** as the Telegram bot, so you can try the whole chat experience without a Telegram account. Play the buyer, the seller and a stranger, and fund the deal with the **real PayPal sandbox** (buyer login is on the page).
 - **[Escrow control room](https://pactly-vert.vercel.app/dashboard)**: every pact, the money PayPal is holding, and every movement, built with AG Grid and AG Charts.
 - **MCP server for AI agents**: `https://pactly-vert.vercel.app/api/mcp` (setup on the [Connect](https://pactly-vert.vercel.app/connect) page).
 
@@ -30,7 +30,7 @@ Traditional escrow means leaving the chat for forms, fees and days of manual rev
 
 ## What it does
 **One escrow engine, three places deals happen:**
-- **Inside the chat.** Add the bot to a Telegram group, or open the browser playground. When someone says "deal 👍" next to a price, Pactly offers to protect it. `/pact` turns the conversation into a contract, buyer and seller tap their roles, the buyer funds with PayPal, the seller sends `/deliver` with photos, links or a tracking number, and the AI's verdict appears in the chat with buttons **only the buyer can use**.
+- **Inside the chat.** Pactly ships as a Telegram bot you can deploy to your own group in about 5 minutes (setup in the README), plus a browser playground that runs the same bot code for judges. When someone says "deal 👍" next to a price, Pactly offers to protect it. `/pact` turns the conversation into a contract, buyer and seller tap their roles, the buyer funds with PayPal, the seller sends `/deliver` with photos, links or a tracking number, and the AI's verdict appears in the chat with buttons **only the buyer can use**.
 - **For AI agents (MCP).** Pactly is a remote MCP server with 8 tools. An agent can hire a human, open a pact, send its owner the funding link, relay the delivery and settle it, but only inside the limits the human set at PayPal checkout.
 - **On the web.** Paste any WhatsApp, Instagram or email thread and get a pact in seconds.
 
@@ -72,7 +72,7 @@ From a live sandbox run on Nov 11, 2026 (shown in the video):
   - **PayPal Agent Toolkit**: shipment tracking after capture, and read-only tools (orders, transactions, disputes, tracking) for the chat agent.
   - Webhooks with signature verification, and `PayPal-Request-Id` idempotency on every write.
 - **AI: Google Gemini (Flash family).** Strict JSON response schemas, multimodal verification, function calling for the agent, and natural language to AG Grid filter models. Requests are **hedged across Flash models**: if one model stalls, the next one starts, and healthy models are remembered in Redis.
-- **Telegram Bot API.** Secret-token webhook verification, update de-duplication and role-locked inline buttons. The browser playground swaps only the transport, so it runs the identical bot code.
+- **Telegram Bot API.** Secret-token webhook verification, update de-duplication and role-locked inline buttons, tested end to end against Telegram API mocks. The browser playground swaps only the transport, so it runs the identical bot code.
 - **MCP.** A Streamable HTTP JSON-RPC server with 8 annotated tools.
 - **AG Grid + AG Charts.** Custom cell renderers, a pinned totals row, row rules, external filters, CSV export and a channel chart with a colour-blind-checked palette.
 - **Tests.** 53 end-to-end checks run the real server against offline PayPal and Telegram mocks: every money path, every role check, the injection guard, MCP mandates, reauthorization and the playground.
@@ -84,7 +84,7 @@ From a live sandbox run on Nov 11, 2026 (shown in the video):
 - **Free-tier reality.** While testing live, the newest Gemini models started hanging on my key. A per-model probe showed it, so I built hedged requests and a shared model-health memory. The demo stays fast even when one model has a bad day.
 
 ## Accomplishments that I'm proud of
-- The same guarded escrow works in a Telegram group, in a browser chat, on the web and for AI agents, with one engine and one set of rules.
+- The same guarded escrow runs in a browser group chat, on the web, for AI agents, and as a Telegram bot you can deploy in 5 minutes, with one engine and one set of rules.
 - A real sandbox deal: $120 held, $50 captured after AI verification, and $70 protected from a prompt-injection attack.
 - An agent that takes real autonomous actions (voids, renewals, reminders) without ever being able to pay anyone out.
 - Judges can run the whole chat experience in a browser tab in two minutes, without installing anything.

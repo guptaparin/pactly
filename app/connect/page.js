@@ -24,9 +24,9 @@ export default function Connect() {
 
       <div className="card">
         <span className="src src-tg tag">Telegram</span>
-        <h2>Add the bot to your chat</h2>
+        <h2>{bot ? "Add the bot to your chat" : "Run Pactly in your Telegram group"}</h2>
         <ol className="small">
-          <li>Add {bot ? <a href={`https://t.me/${bot}?startgroup=true`} target="_blank" rel="noreferrer"><b>@{bot}</b></a> : <b>the Pactly bot</b>} to the group where buyer and seller are talking (or forward it the messages in a DM).</li>
+          <li>{bot ? <>Add <a href={`https://t.me/${bot}?startgroup=true`} target="_blank" rel="noreferrer"><b>@{bot}</b></a></> : <>Deploy your own Pactly bot (about 5 minutes, <a href="https://github.com/guptaparin/pactly#telegram-bot-setup-5-minutes" target="_blank" rel="noreferrer">setup guide</a>) and add it</>} to the group where buyer and seller are talking (or forward it the messages in a DM).</li>
           <li>Agree the deal as you normally would. When someone says “deal 👍”, the bot offers to protect it, or anyone can send <code>/pact</code>.</li>
           <li>Buyer and seller each tap their role. The buyer taps <b>Fund with PayPal</b>; the money is <b>held</b>, not paid.</li>
           <li>The seller sends <code>/deliver</code> with a note, links, photos or <code>tracking: NUMBER</code>. The AI checks every criterion and posts the verdict.</li>

@@ -12,7 +12,7 @@ Freelancers and small sellers close millions of deals in chats. Either the buyer
 - **Live demo:** https://pactly-vert.vercel.app
 - **Start here: [Try it](https://pactly-vert.vercel.app/try).** A group chat in your browser that runs the **same bot engine** as the Telegram integration. Play Riya (buyer), Arjun (seller) and Eve (a stranger) with one-tap suggested messages and a checklist: agree a deal → the bot offers to protect it → claim roles → fund with the real PayPal sandbox → deliver (sample logo images are generated for you) → watch the seller's own "Release" tap get refused → release as the buyer → attack the AI verifier and watch the payout freeze. No Telegram account needed.
 - **Control room:** open **Control room**. Demo pacts load automatically and show every state: a blocked prompt-injection attack, an AI agent that hired a human over MCP, a renewed PayPal hold, a Telegram goods deal with tracking, a scam chat blocked before payment, a dispute, an auto-voided deadline. Try **Ask your ledger** (“Which deals need my decision?”).
-- **Telegram:** **Connect → Add the bot to a group**, chat a deal, say “deal 👍”, and follow the buttons.
+- **Telegram:** the playground above runs the same bot code. To run it in a real Telegram group, deploy your own bot in about 5 minutes ([setup below](#telegram-bot-setup-5-minutes)).
 - **AI agents:** **Connect** shows the MCP server URL and copy-paste config for Claude, Claude Code and Cursor.
 - **Live PayPal flow on the web:** New pact → *Use sample chat* → *Draft pact with AI* → pay with the PayPal button using a **US sandbox personal account** → switch to *Seller* and submit work → switch to *Buyer* and settle.
 - **Sandbox buyer login (fake money, safe to share):**
@@ -122,8 +122,9 @@ npm run build && npm run test:e2e
 4. `/api/health` shows whether PayPal, AI, storage and Telegram are configured.
 
 ## What's real and what's simulated
-- **Real:** every PayPal call (sandbox orders, authorizations, captures, voids, reauthorizations, Agent Toolkit tracking), every AI call (Gemini), the Telegram bot, the MCP server and the playground's bot logic.
+- **Real:** every PayPal call (sandbox orders, authorizations, captures, voids, reauthorizations, Agent Toolkit tracking), every AI call (Gemini), the MCP server and the playground's bot logic.
 - **Simulated:** the playground replaces Telegram's servers with an in-app transcript (same `lib/telegram.js` code path); demo pacts in the control room are read-only examples that never touch PayPal; `npm run test:e2e` uses offline mocks.
+- **Telegram:** the bot is fully built and tested end to end against Telegram API mocks; the hosted demo has no bot attached, so use the playground or deploy your own (5-minute setup below).
 - **Not done yet:** WhatsApp/Instagram, live (non-sandbox) payouts, seller identity verification.
 
 ## Notes and limits
